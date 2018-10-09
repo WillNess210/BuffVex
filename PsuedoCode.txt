@@ -1,0 +1,77 @@
+class Chassis{
+	private Gyro gyro;
+  private Vector<Motor> leftMotors, rightMotors;
+  private Encoder leftEncoder, rightEncoder;
+  
+  // sets all left motors to parameter given
+  public bool setLeft(double power){ 
+  	for motor in leftMotors{
+    	motor.set(power);
+    }
+  }
+  
+  // sets all right motors to parameter given
+  public bool setRight(double power){
+  	for motor in rightMotors{
+    	motor.set(power);
+    }
+  }
+  
+  // returns gyro angle
+  public double getAngle(){
+  	return gyro.getAngle();
+  }
+  
+  // resets gyro
+  public void resetGyro(){
+  	gyro.reset();
+  }
+  public double getRightInches, getleftInches();
+}
+
+
+class PID{
+	double P, I, D, goal, errorSum, lastError;
+  public PID(double P, double I, double D){
+  	this.P = P;
+    this.I = I;
+    this.D = D;
+    goal = 0;
+    errorSum = 0;
+    lastError = 0;
+  }
+  void setGoal(double newGoal){
+  	this.goal = newGoal;
+  }
+  double getError(double curVal){
+  	return this.goal - curVal;
+  }
+  // https://wikimedia.org/api/rest_v1/media/math/render/svg/69072d4013ea8f14ab59a8283ef216fb958870b2
+  // power = P * error + I * errorSum + D * errorchange
+  // TODO fix bug where changing goal screws up D * errorChange case
+  double getPower(double curVal){
+  	double error = getError(curVal);
+    errorSum += error;
+    double errorChange = error - lastError;
+    lastError = error;
+    return P * error + I * errorSum + D * errorChange;
+  }
+}
+
+class DrivePID extends PID{
+	double rangeForSum;
+	public DrivePID(double P, double I, double D, double rangeForSum){
+  	super(P, I, D);
+  }
+  double getPower(double curVal){
+  	double error = getError(curVal);
+    if(sign error != sign lastError){ // if opposite signs
+    	errorSum = 0;
+    }else if(){
+    	errorSum += error;
+    }
+    double errorChange = error - lastError;
+    lastError = error;
+    return P * error + I * errorSum + D * errorChange;
+  }
+}
